@@ -34,13 +34,25 @@
         return '';
       }
     }
-  
+
+    // Function that cleans up product information
+    function extractFabricType(productFactsText) {
+      const pattern = /fabric type\s*(.*?)\s*care instructions/si;
+      const match = pattern.exec(productFactsText);
+      if (match) {
+        return match[1].trim().replace(/[:;]+/g, ',').replace(/\bfull\b/gi, '100%');
+      } else {
+        return productFactsText.replace(/[:;]+/g, ',').replace(/\bfull\b/gi, '100%');
+      }
+    }
+
     // Function to determine if a product is fast fashion
     function isFastFashion(productFactsText) {
+      const fabricTypes = extractFabricType(productFactsText);
       const materialPattern = /(\d+%)?\s*([a-zA-Z]+)/gi;
-      const matches = productFactsText.match(materialPattern) || [];
+      const matches = fabricTypes.match(materialPattern) || [];
 
-      const badMaterials = ["polyester", "poly", "nylon", "acrylic", "rayon", "spandex", "polyamide"];
+      const badMaterials = ["polyester", "poly", "nylon", "acrylic", "rayon", "spandex", "polyamide", "polyester", "elastane"];
 
       const materialsSet = new Set(matches.map(match => {
         const percentageMaterialMatch = /(\d+%)?\s*([a-zA-Z]+)/i.exec(match);
