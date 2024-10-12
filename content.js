@@ -37,26 +37,37 @@
   
     // Function to determine if a product is fast fashion
     function isFastFashion(productFactsText) {
-      const fastFashionCountries = ['china', 'bangladesh', 'india', 'honduras'];
-      const fastFashionMaterials = ['polyester', 'nylon', 'acrylic'];
-  
-      // Check for manufacturing country
-      const isFastFashionCountry = fastFashionCountries.some(country =>
-        productFactsText.includes(country)
-      );
-  
-      // Check for phrases like '95% Polyester' in the product facts text
-      const materialPattern = /(\d+%)\s*(polyester|nylon|acrylic)/gi;
-      const matches = productFactsText.match(materialPattern);
-  
-      const hasHighPercentageFastFashionMaterial = matches && matches.length > 0;
-  
-      // Determine if the product is fast fashion
-      return hasHighPercentageFastFashionMaterial || isFastFashionCountry;
+      const materialPattern = /(\d+%)?\s*([a-zA-Z]+)/gi;
+      const matches = productFactsText.match(materialPattern) || [];
+
+      const badMaterials = ["polyester", "poly", "nylon", "acrylic", "rayon", "spandex", "polyamide"];
+
+      const materialsSet = new Set(matches.map(match => {
+        const percentageMaterialMatch = /(\d+%)?\s*([a-zA-Z]+)/i.exec(match);
+        return percentageMaterialMatch ? percentageMaterialMatch[2].toLowerCase() : null;
+      }).filter(Boolean)); // Remove any null values from set of all materials
+
+      let highPercentageBadMaterial = false;
+      matches.forEach(match => {
+        const percentageMaterialMatch = /(\d+%)\s*([a-zA-Z]+)/i.exec(match);
+        if (percentageMaterialMatch) {
+          const percentage = parseInt(percentageMaterialMatch[1]);
+          const material = percentageMaterialMatch[2].toLowerCase();
+          if (badMaterials.includes(material) && percentage >= 50) {
+            highPercentageBadMaterial = true;
+          }
+        }
+      });
+
+      const allMaterialsBad =
+        materialsSet.size > 0 &&
+        Array.from(materialsSet).every(material => badMaterials.includes(material));
+
+      return highPercentageBadMaterial || allMaterialsBad;
     }
   
     // Limit the number of concurrent fetches to avoid overloading
-    const CONCURRENT_LIMIT = 10;
+    const CONCURRENT_LIMIT = 20;
     let index = 0;
   
     async function processListings() {
