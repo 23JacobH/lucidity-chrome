@@ -27,7 +27,7 @@
             productFactsText = detailBullets.innerText.toLowerCase();
           }
         }
-  
+
         return productFactsText;
       } catch (error) {
         console.error(`Failed to fetch product details for ASIN ${asin}:`, error);
@@ -77,6 +77,52 @@
 
       return highPercentageBadMaterial || allMaterialsBad;
     }
+
+    // Add eBay link button next to Add to Cart button
+    function addEbayButton(listing) {
+      const addToCartContainer = listing.querySelector('.puis-atcb-add-container');
+      if (addToCartContainer) {
+        const titleElement = listing.querySelector('span.a-size-base-plus.a-color-base.a-text-normal');
+        let productName = titleElement ? titleElement.innerText : 'product';
+
+        const searchQuery = encodeURIComponent(productName);
+        const ebayLink = `https://www.ebay.com/sch/i.html?_nkw=${searchQuery}&LH_ItemCondition=3000`;
+
+        // Create a new button for eBay link
+        const ebayButton = document.createElement('button');
+        ebayButton.className = 'a-button a-button-secondary ebay-button'; // Amazon style button
+
+        // Create img element for eBay logo
+        const ebayLogo = document.createElement('img');
+        ebayLogo.src = chrome.runtime.getURL('images/ebay.png'); // Load eBay logo from extension directory
+        ebayLogo.alt = 'Search on eBay';
+        ebayLogo.style.width = '30px'; // Adjust the size of the eBay logo as needed
+        ebayLogo.style.marginLeft = '5px';
+        ebayLogo.style.marginRight = '5px';
+        ebayLogo.style.marginTop = '3px';
+
+        ebayButton.appendChild(ebayLogo);
+        ebayButton.onclick = function () {
+          window.open(ebayLink, '_blank');
+        };
+
+        // Create a wrapper div to ensure buttons stay side by side
+        const buttonWrapper = document.createElement('div');
+        buttonWrapper.style.display = 'inline-flex';
+        buttonWrapper.style.gap = '0px'; // Add some space between buttons
+
+        // Insert both the Add to Cart and eBay button into the wrapper
+        const addToCartButton = addToCartContainer.querySelector('.a-button-primary');
+        if (addToCartButton) {
+          addToCartButton.style.marginRight = '0'; // Remove extra margin to fit side by side
+          buttonWrapper.appendChild(addToCartButton);
+        }
+        buttonWrapper.appendChild(ebayButton);
+
+        // Replace original container with the wrapper
+        addToCartContainer.appendChild(buttonWrapper);
+      }
+    }
   
     // Limit the number of concurrent fetches to avoid overloading
     const CONCURRENT_LIMIT = 20;
@@ -100,6 +146,7 @@
               if (imageElement) {
                 imageElement.style.filter = 'grayscale(100%) brightness(40%) sepia(100%) hue-rotate(-50deg) saturate(600%) contrast(0.8)';
               }
+              addEbayButton(listing);
             }
           }
         });
