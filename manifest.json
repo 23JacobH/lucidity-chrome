@@ -3,17 +3,10 @@
   "name": "Lucidity",
   "version": "0.1",
   "description": "Lucidity encourages sustainable shopping by flagging fast fashion items and suggesting secondhand alternatives.",
-  "permissions": [
-    "activeTab",
-    "storage",
-    "scripting",
-    "declarativeNetRequest"
-  ],
   "host_permissions": [
     "*://*.amazon.com/*"
   ],
   "action": {
-    "default_title": "Lucidity",
     "default_popup": "popup.html"
   },
   "background": {
