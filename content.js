@@ -78,7 +78,7 @@
       return highPercentageBadMaterial || allMaterialsBad;
     }
 
-    // Add eBay & facebook link button next to Add to Cart button
+    // Add link buttons next to Add to Cart button
     function addButtons(listing) {
       const addToCartContainer = listing.querySelector('.puis-atcb-add-container');
       if (addToCartContainer) {
@@ -88,8 +88,8 @@
         const searchQuery = encodeURIComponent(productName);
         const ebayLink = `https://www.ebay.com/sch/i.html?_nkw=${searchQuery}&LH_ItemCondition=3000`;
         const fbLink = `https://www.facebook.com/marketplace/search?itemCondition=used_like_new%2Cused_good%2Cused_fair&query=${searchQuery}&exact=false`;
+        const depopLink = `https://www.depop.com/search/?q=${searchQuery}&conditions=used_like_new%2Cused_excellent%2Cused_good%2Cused_fair&sort=relevance`;
 
-        // Create a new button for eBay link
         const ebayButton = document.createElement('button');
         ebayButton.className = 'a-button a-button-secondary ebay-button'; // Amazon style button
         ebayButton.style.display = 'flex';
@@ -102,38 +102,50 @@
         fbButton.style.alignItems = 'center';
         fbButton.style.justifyContent = 'center';
 
-        // Create img element for eBay logo
+        const depopButton = document.createElement('button');
+        depopButton.className = 'a-button a-button-secondary depop-button';
+        depopButton.style.display = 'flex';
+        depopButton.style.alignItems = 'center';
+        depopButton.style.justifyContent = 'center';
+
         const ebayLogo = document.createElement('img');
-        ebayLogo.src = chrome.runtime.getURL('images/ebay.png'); // Load eBay logo from directory
+        ebayLogo.src = chrome.runtime.getURL('images/ebay.png');
         ebayLogo.alt = 'Search on eBay';
-        ebayLogo.style.width = '30px';
+        ebayLogo.style.height = '12px';
         ebayLogo.style.marginLeft = '5px';
         ebayLogo.style.marginRight = '5px';
-
         ebayButton.appendChild(ebayLogo);
         ebayButton.onclick = function () {
           window.open(ebayLink, '_blank');
         };
 
-        // Create img element for Facebook Marketplace logo
         const fbLogo = document.createElement('img');
         fbLogo.src = chrome.runtime.getURL('images/fb.png');
         fbLogo.alt = 'Search on Facebook Marketplace';
         fbLogo.style.height = '12px';
         fbLogo.style.marginLeft = '5px';
         fbLogo.style.marginRight = '5px';
-
         fbButton.appendChild(fbLogo);
         fbButton.onclick = function () {
           window.open(fbLink, '_blank');
         };
 
-        // Create a wrapper div to ensure buttons stay side by side
+        const depopLogo = document.createElement('img');
+        depopLogo.src = chrome.runtime.getURL('images/depop.png');
+        depopLogo.alt = 'Search on Depop';
+        depopLogo.style.height = '10px';
+        depopLogo.style.marginLeft = '5px';
+        depopLogo.style.marginRight = '5px';
+        depopButton.appendChild(depopLogo);
+        depopButton.onclick = function () {
+          window.open(depopLink, '_blank');
+        };
+
         const buttonWrapper = document.createElement('div');
         buttonWrapper.style.display = 'inline-flex';
         buttonWrapper.style.gap = '0px'; // Add some space between buttons
 
-        // Insert both the Add to Cart, eBay, and Facebook button into the wrapper
+        // Insert the Add to Cart, eBay, Facebook, and Depop button into the wrapper
         const addToCartButton = addToCartContainer.querySelector('.a-button-primary');
         if (addToCartButton) {
           addToCartButton.style.marginRight = '0'; // Remove extra margin to fit side by side
@@ -141,6 +153,7 @@
         }
         buttonWrapper.appendChild(ebayButton);
         buttonWrapper.appendChild(fbButton);
+        buttonWrapper.appendChild(depopButton);
 
         // Replace original container with the wrapper
         addToCartContainer.appendChild(buttonWrapper);
