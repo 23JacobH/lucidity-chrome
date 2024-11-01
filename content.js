@@ -52,7 +52,7 @@
       const materialPattern = /(\d+%)?\s*([a-zA-Z]+)/gi;
       const matches = fabricTypes.match(materialPattern) || [];
 
-      const badMaterials = ["polyester", "poly", "nylon", "acrylic", "rayon", "spandex", "polyamide", "polyester", "elastane"];
+      const badMaterials = ["polyester", "poly", "nylon", "acrylic", "rayon", "spandex", "polyamide", "polyester", "elastane", "viscose"];
 
       const materialsSet = new Set(matches.map(match => {
         const percentageMaterialMatch = /(\d+%)?\s*([a-zA-Z]+)/i.exec(match);
